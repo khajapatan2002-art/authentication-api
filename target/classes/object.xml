@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<http:listener-config name="HTTP_Listener_config" doc:name="HTTP Listener config" doc:id="871a0aec-4b84-4ff2-bc00-dc68c79655c2" >
+		<http:listener-connection host="localhost" port="8082" />
+	</http:listener-config>
+	<flow name="objectFlow" doc:id="c4a8d29e-a696-4192-87fc-e27d936e939a" >
+		<http:listener doc:name="Listener" doc:id="d03f92c2-777b-47cc-b4af-81d64550c9b1" config-ref="HTTP_Listener_config" path="/object-token"/>
+		<ee:transform doc:name="Token data" doc:id="863ab87c-2dc7-43a8-8908-1b383ea93b2e" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+	"token": "BASIC " ++ uuid(),
+	"expiry_intervals":60,
+	"token_type":"Bearer"
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</flow>
+</mule>
